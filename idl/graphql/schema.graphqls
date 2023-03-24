@@ -1,0 +1,17 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar JSON
+
+input CreateFooInput {
+  nestedObject: JSON!
+}
+
+type Foo {
+  name: String!
+}
+
+type Mutation {
+  createFoo(input: CreateFooInput!): Foo!
+}
