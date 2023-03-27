@@ -13,7 +13,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/kevinmichaelchen/go-gqlgen-schemaless-example/internal/handler/model"
-	"github.com/kevinmichaelchen/go-gqlgen-schemaless-example/internal/handler/model/custom"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -166,10 +165,18 @@ var sources = []*ast.Source{
 #
 # https://gqlgen.com/getting-started/
 
-scalar JSON
+# Custom scalar for map[string]interface{}
+# https://gqlgen.com/reference/scalars/#map
+scalar Map
 
 input CreateFooInput {
-  nestedObject: JSON!
+  """
+  A random grab-bag of attributes.
+  These aren't explicitly modeled for a variety of reasons:
+    - they change often; they're ephemeral; they'll be deprecated soon
+    - they're too bespoke and not really the concern of this API
+  """
+  attributes: Map!
 }
 
 type Foo {
@@ -2267,18 +2274,18 @@ func (ec *executionContext) unmarshalInputCreateFooInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"nestedObject"}
+	fieldsInOrder := [...]string{"attributes"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "nestedObject":
+		case "attributes":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nestedObject"))
-			it.NestedObject, err = ec.unmarshalNJSON2githubᚗcomᚋkevinmichaelchenᚋgoᚑgqlgenᚑschemalessᚑexampleᚋinternalᚋhandlerᚋmodelᚋcustomᚐJSON(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("attributes"))
+			it.Attributes, err = ec.unmarshalNMap2map(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2757,20 +2764,25 @@ func (ec *executionContext) marshalNFoo2ᚖgithubᚗcomᚋkevinmichaelchenᚋgo�
 	return ec._Foo(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNJSON2githubᚗcomᚋkevinmichaelchenᚋgoᚑgqlgenᚑschemalessᚑexampleᚋinternalᚋhandlerᚋmodelᚋcustomᚐJSON(ctx context.Context, v interface{}) (custom.JSON, error) {
-	var res custom.JSON
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
+	res, err := graphql.UnmarshalMap(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNJSON2githubᚗcomᚋkevinmichaelchenᚋgoᚑgqlgenᚑschemalessᚑexampleᚋinternalᚋhandlerᚋmodelᚋcustomᚐJSON(ctx context.Context, sel ast.SelectionSet, v custom.JSON) graphql.Marshaler {
+func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.SelectionSet, v map[string]interface{}) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return v
+	res := graphql.MarshalMap(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

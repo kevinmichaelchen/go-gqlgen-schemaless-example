@@ -2,12 +2,12 @@
 
 package model
 
-import (
-	"github.com/kevinmichaelchen/go-gqlgen-schemaless-example/internal/handler/model/custom"
-)
-
 type CreateFooInput struct {
-	NestedObject custom.JSON `json:"nestedObject"`
+	// A random grab-bag of attributes.
+	// These aren't explicitly modeled for a variety of reasons:
+	//   - they change often; they're ephemeral; they'll be deprecated soon
+	//   - they're too bespoke and not really the concern of this API
+	Attributes map[string]interface{} `json:"attributes"`
 }
 
 type Foo struct {

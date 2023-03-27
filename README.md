@@ -32,17 +32,23 @@ make run
 Visit [localhost:8081](http://localhost:8081/) and run the following mutation:
 
 ```graphql
-mutation {
+mutation CreateFoo(
+  $attributes: Map!
+) {
   createFoo(
     input: {
-      nestedObject: {
-        settings: {
-          toggle1: true
-        }
-      }
+      attributes: $attributes
     }
   ) {
     name
   }
+}
+```
+
+with variables:
+
+```json
+{
+  "attributes": {"settings": {"toggle1": true}}
 }
 ```

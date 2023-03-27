@@ -6,6 +6,8 @@ package graphql
 
 import (
 	"context"
+	"fmt"
+	"github.com/mitchellh/mapstructure"
 
 	"github.com/kevinmichaelchen/go-gqlgen-schemaless-example/internal/handler/graphql/generated"
 	"github.com/kevinmichaelchen/go-gqlgen-schemaless-example/internal/handler/model"
@@ -14,7 +16,13 @@ import (
 
 // CreateFoo is the resolver for the createFoo field.
 func (r *mutationResolver) CreateFoo(ctx context.Context, input model.CreateFooInput) (*model.Foo, error) {
-	litter.Dump(input)
+	var result model.Attributes
+	err := mapstructure.Decode(input.Attributes, &result)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal attributes: %w", err)
+	}
+
+	litter.Dump(result)
 	return &model.Foo{Name: "foo"}, nil
 }
 

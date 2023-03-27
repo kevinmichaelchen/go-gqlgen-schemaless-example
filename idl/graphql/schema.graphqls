@@ -2,10 +2,18 @@
 #
 # https://gqlgen.com/getting-started/
 
-scalar JSON
+# Custom scalar for map[string]interface{}
+# https://gqlgen.com/reference/scalars/#map
+scalar Map
 
 input CreateFooInput {
-  nestedObject: JSON!
+  """
+  A random grab-bag of attributes.
+  These aren't explicitly modeled for a variety of reasons:
+    - they change often; they're ephemeral; they'll be deprecated soon
+    - they're too bespoke and not really the concern of this API
+  """
+  attributes: Map!
 }
 
 type Foo {

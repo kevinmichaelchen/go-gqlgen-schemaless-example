@@ -50,8 +50,6 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 models:
-  JSON:
-    model: github.com/kevinmichaelchen/go-gqlgen-schemaless-example/internal/handler/model/custom.JSON
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID
